@@ -1,15 +1,17 @@
 package com.example.backend.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 import java.util.Date;
 
+
 @Entity
+@Table(name = "blogpost")
 public class BlogPost {
 
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String title;
     private String content;
     private String author;
@@ -19,7 +21,7 @@ public class BlogPost {
     public BlogPost() {
     }
 
-    public BlogPost(String id, String title, String content, String author, Date creationDate, String imageUrl) {
+    public BlogPost(Long id, String title, String content, String author, Date creationDate, String imageUrl) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -28,11 +30,11 @@ public class BlogPost {
         this.imageUrl = imageUrl;
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

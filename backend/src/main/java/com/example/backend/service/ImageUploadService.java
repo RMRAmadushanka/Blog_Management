@@ -19,7 +19,7 @@ public class ImageUploadService {
     @Autowired
     private AmazonS3 amazonS3;
 
-    private String bucketName = "edify1235";  // AWS S3 Bucket Name
+    private String bucketName = "slcar";
 
     public String uploadImage(MultipartFile file) throws IOException {
 
