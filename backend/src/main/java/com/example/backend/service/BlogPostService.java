@@ -1,5 +1,6 @@
 package com.example.backend.service;
 
+import com.example.backend.dto.BlogPostDTO;
 import com.example.backend.model.BlogPost;
 import com.example.backend.repository.BlogPostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,7 @@ public class BlogPostService {
     @Autowired
     private ImageUploadService imageUploadService;
 
-    public Mono<BlogPost> createPost(BlogPost blogPost, MultipartFile imageFile) {
+    public Mono<BlogPostDTO> createPost(BlogPost blogPost, MultipartFile imageFile) {
         blogPost.setCreationDate(new Date());
         if (imageFile != null) {
             try {
@@ -32,10 +33,21 @@ public class BlogPostService {
                 e.printStackTrace();
             }
         }
-        return Mono.just(blogPostRepository.save(blogPost));
+        BlogPost savedBlogPost = blogPostRepository.save(blogPost);
+        BlogPostDTO blogPostDTO = new BlogPostDTO(
+                savedBlogPost.getId(),
+                savedBlogPost.getTitle(),
+                savedBlogPost.getAuthor(),
+                savedBlogPost.getCreationDate(),
+                savedBlogPost.getImageUrl(),
+                savedBlogPost.getViews(),
+                savedBlogPost.getLikes()
+
+        );
+        return Mono.just(blogPostDTO);
     }
 
-    public Mono<BlogPost> updatePost(BlogPost blogPost, Long id, MultipartFile imageFile) {
+    public Mono<BlogPostDTO> updatePost(BlogPost blogPost, Long id, MultipartFile imageFile) {
         Optional<BlogPost> existingPost = blogPostRepository.findById(id);
         if(existingPost.isPresent()){
             BlogPost updatedPost = existingPost.get();
@@ -53,8 +65,17 @@ public class BlogPostService {
                     e.printStackTrace();
                 }
             }
-
-            return Mono.just(blogPostRepository.save(updatedPost));
+            BlogPost savedUpdatedPost  = blogPostRepository.save(updatedPost);
+            BlogPostDTO blogPostDTO = new BlogPostDTO(
+                    savedUpdatedPost.getId(),
+                    savedUpdatedPost.getTitle(),
+                    savedUpdatedPost.getAuthor(),
+                    savedUpdatedPost.getCreationDate(),
+                    savedUpdatedPost.getImageUrl(),
+                    savedUpdatedPost.getViews(),
+                    savedUpdatedPost.getLikes()
+            );
+            return Mono.just(blogPostDTO);
         }
         return Mono.empty();
     }
@@ -77,7 +98,30 @@ public class BlogPostService {
         return blogPost.isPresent() ? Mono.just(blogPost.get()) : Mono.empty();
     }
 
-    public Flux<BlogPost> getAllPosts() {
-        return Flux.fromIterable(blogPostRepository.findAll());
+    public Flux<BlogPostDTO> getAllPosts() {
+        return Flux.fromIterable(blogPostRepository.findAll())
+                .map(post -> new BlogPostDTO(
+                        post.getId(),
+                        post.getTitle(),
+                        post.getAuthor(),
+                        post.getCreationDate(),
+                        post.getImageUrl(),
+                        post.getViews(),
+                        post.getLikes()
+                ));
+    }
+
+    public Flux<BlogPostDTO> getPopularPosts(int minLikes, int minViews) {
+        return Flux.fromIterable(blogPostRepository.findAll())
+                .filter(post -> post.getLikes() >= minLikes && post.getViews() >= minViews)
+                .map(post -> new BlogPostDTO(
+                        post.getId(),
+                        post.getTitle(),
+                        post.getAuthor(),
+                        post.getCreationDate(),
+                        post.getImageUrl(),
+                        post.getViews(),
+                        post.getLikes()
+                ));
     }
 }

@@ -1,5 +1,6 @@
 package com.example.backend.controller;
 
+import com.example.backend.dto.BlogPostDTO;
 import com.example.backend.model.BlogPost;
 import com.example.backend.repository.BlogPostRepository;
 import com.example.backend.service.BlogPostService;
@@ -19,7 +20,7 @@ public class BlogController {
     private BlogPostService blogPostService;
 
     @PostMapping
-    public Mono<BlogPost> createPost(@RequestParam("title") String title,
+    public Mono<BlogPostDTO> createPost(@RequestParam("title") String title,
                                      @RequestParam("content") String content,
                                      @RequestParam("author") String author,
                                      @RequestParam("image") MultipartFile image) {
@@ -31,7 +32,7 @@ public class BlogController {
     }
 
     @PutMapping("/{id}")
-    public Mono<BlogPost> updatePost(@PathVariable Long id,
+    public Mono<BlogPostDTO> updatePost(@PathVariable Long id,
                                      @RequestParam("title") String title,
                                      @RequestParam("content") String content,
                                      @RequestParam("author") String author,
@@ -55,7 +56,12 @@ public class BlogController {
     }
 
     @GetMapping
-    public Flux<BlogPost> getAllPosts() {
+    public Flux<BlogPostDTO> getAllPosts() {
         return blogPostService.getAllPosts();
+    }
+
+    @GetMapping("/popular")
+    public Flux<BlogPostDTO> getPopularPosts(@RequestParam("minLikes") int minLikes, @RequestParam("minViews") int minViews) {
+        return blogPostService.getPopularPosts(minLikes, minViews);
     }
 }
