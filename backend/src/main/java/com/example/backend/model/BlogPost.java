@@ -27,12 +27,12 @@ public class BlogPost {
     private int views = 0;
     private int likes = 0;
 
-    // One-to-Many Relationship with BlogPostTags
+
     @OneToMany(mappedBy = "blogPost", cascade = CascadeType.ALL, orphanRemoval = true)
 
     private List<BlogPostTags> tags;
 
-    // One-to-Many Relationship with BlogPostCategories
+
     @OneToMany(mappedBy = "blogPost", cascade = CascadeType.ALL, orphanRemoval = true)
 
     private List<BlogPostCategories> categories;

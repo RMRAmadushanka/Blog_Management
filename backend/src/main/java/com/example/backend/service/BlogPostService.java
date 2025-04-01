@@ -2,6 +2,7 @@ package com.example.backend.service;
 
 import com.example.backend.dto.BlogPostDTO;
 import com.example.backend.model.BlogPost;
+import com.example.backend.model.BlogPostTags;
 import com.example.backend.repository.BlogPostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,7 +12,10 @@ import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class BlogPostService {
@@ -124,4 +128,25 @@ public class BlogPostService {
                         post.getLikes()
                 ));
     }
+
+    public Flux<BlogPostDTO> getPostByTags(Set<String> tags) {
+        List<BlogPost> allPosts = blogPostRepository.findAll();
+        return Flux.fromIterable(allPosts)
+                .filter(post -> {
+                    Set<String> postTags = post.getTags().stream()
+                            .map(BlogPostTags::getTag) // Convert BlogPostTags to Strings
+                            .collect(Collectors.toSet());
+                    return postTags.stream().anyMatch(tags::contains);
+                })
+                .map(post -> new BlogPostDTO(
+                        post.getId(),
+                        post.getTitle(),
+                        post.getAuthor(),
+                        post.getCreationDate(),
+                        post.getImageUrl(),
+                        post.getViews(),
+                        post.getLikes()
+                ));
+    }
+
 }

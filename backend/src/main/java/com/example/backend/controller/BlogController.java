@@ -11,6 +11,8 @@ import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Set;
+
 
 @RestController
 @RequestMapping("/api/blog")
@@ -63,5 +65,10 @@ public class BlogController {
     @GetMapping("/popular")
     public Flux<BlogPostDTO> getPopularPosts(@RequestParam("minLikes") int minLikes, @RequestParam("minViews") int minViews) {
         return blogPostService.getPopularPosts(minLikes, minViews);
+    }
+
+    @GetMapping("/by-tags")
+    public Flux<BlogPostDTO> getPostsByTags(@RequestParam Set<String> tags) {
+        return blogPostService.getPostByTags(tags);
     }
 }
