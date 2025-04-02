@@ -18,7 +18,7 @@ public class Comment {
     private Date creationDate;
 
     @ManyToOne
-    @JoinColumn(name = "blogpost_id", nullable = false)  // Foreign Key to BlogPost
+    @JoinColumn(name = "blogpost_id", nullable = false)
     private BlogPost blogPost;
 
     public Comment() {}

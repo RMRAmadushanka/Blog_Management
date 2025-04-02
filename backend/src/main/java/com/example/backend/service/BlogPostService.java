@@ -134,7 +134,7 @@ public class BlogPostService {
         return Flux.fromIterable(allPosts)
                 .filter(post -> {
                     Set<String> postTags = post.getTags().stream()
-                            .map(BlogPostTags::getTag) // Convert BlogPostTags to Strings
+                            .map(BlogPostTags::getTag)
                             .collect(Collectors.toSet());
                     return postTags.stream().anyMatch(tags::contains);
                 })
@@ -148,5 +148,22 @@ public class BlogPostService {
                         post.getLikes()
                 ));
     }
+
+    public Flux<BlogPostDTO> getMostCommentedPosts(int minComments){
+        return Flux.fromIterable(blogPostRepository.findAll())
+                .filter(post -> post.getComments().size() >= minComments)
+                .map(post -> new BlogPostDTO(
+                        post.getId(),
+                        post.getTitle(),
+                        post.getAuthor(),
+                        post.getCreationDate(),
+                        post.getImageUrl(),
+                        post.getViews(),
+                        post.getLikes()
+                ));
+
+    }
+
+
 
 }

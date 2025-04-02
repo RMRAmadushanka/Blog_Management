@@ -37,8 +37,7 @@ public class BlogPost {
 
     private List<BlogPostCategories> categories;
 
-    // One-to-Many Relationship with Comments
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "blogPost", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
 
     public BlogPost() {}
