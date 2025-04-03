@@ -2,6 +2,7 @@ package com.example.backend.service;
 
 import com.example.backend.dto.BlogPostDTO;
 import com.example.backend.model.BlogPost;
+import com.example.backend.model.BlogPostCategories;
 import com.example.backend.model.BlogPostTags;
 import com.example.backend.repository.BlogPostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -162,6 +163,24 @@ public class BlogPostService {
                         post.getLikes()
                 ));
 
+    }
+
+
+    public Flux<BlogPostDTO> getPostsByCategory(String category){
+        return Flux.fromIterable(blogPostRepository.findAll())
+                .filter(post -> post.getCategories().stream()
+                        .map(categoryName -> categoryName.getCategory())
+                        .anyMatch(name -> name.equals(category)))
+                .sort((post1,post2)-> Integer.compare(post2.getLikes(),post1.getLikes()))
+                .map(post -> new BlogPostDTO(
+                        post.getId(),
+                        post.getTitle(),
+                        post.getAuthor(),
+                        post.getCreationDate(),
+                        post.getImageUrl(),
+                        post.getViews(),
+                        post.getLikes()
+                ));
     }
 
 

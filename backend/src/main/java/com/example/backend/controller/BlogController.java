@@ -76,4 +76,9 @@ public class BlogController {
     public Flux<BlogPostDTO> getMostCommentedPosts(@RequestParam int minComments) {
         return blogPostService.getMostCommentedPosts(minComments);
     }
+
+    @GetMapping("/categories")
+    public Flux<BlogPostDTO> getPostsByCategory(@RequestParam String category) {
+        return blogPostService.getPostsByCategory(category);
+    }
 }
