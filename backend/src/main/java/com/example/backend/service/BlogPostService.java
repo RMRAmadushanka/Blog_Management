@@ -12,6 +12,9 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -183,6 +186,18 @@ public class BlogPostService {
                 ));
     }
 
+    public Flux<String> deleteOldPosts(int days) {
+        LocalDate todayMinusDays = LocalDate.now().minusDays(days);
+        LocalDateTime thresholdDateTime = todayMinusDays.atStartOfDay();
+        Date thresholdDate = Timestamp.valueOf(thresholdDateTime);
+
+        return Flux.fromIterable(blogPostRepository.findAll())
+                .filter(post -> post.getCreationDate().before(thresholdDate))
+                .flatMap(post -> {
+                    blogPostRepository.deleteById(post.getId());
+                    return Mono.just("Deleted Post ID: " + post.getId());
+                });
+    }
 
 
 }

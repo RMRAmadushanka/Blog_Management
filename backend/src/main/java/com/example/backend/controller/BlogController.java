@@ -2,10 +2,8 @@ package com.example.backend.controller;
 
 import com.example.backend.dto.BlogPostDTO;
 import com.example.backend.model.BlogPost;
-import com.example.backend.repository.BlogPostRepository;
 import com.example.backend.service.BlogPostService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Flux;
@@ -80,5 +78,10 @@ public class BlogController {
     @GetMapping("/categories")
     public Flux<BlogPostDTO> getPostsByCategory(@RequestParam String category) {
         return blogPostService.getPostsByCategory(category);
+    }
+
+    @DeleteMapping("/deleteOld")
+    public Flux<String> deleteOldPosts(@RequestParam int days) {
+        return blogPostService.deleteOldPosts(days);
     }
 }
